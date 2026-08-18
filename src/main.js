@@ -7,9 +7,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 // ==========================================
 
 const scene = new THREE.Scene()
-
-const flower = new THREE.Group()
-scene.add(flower)
+scene.background = new THREE.Color(0x050505)
 
 
 // ==========================================
@@ -23,7 +21,7 @@ const camera = new THREE.PerspectiveCamera(
     1000
 )
 
-camera.position.z = 4
+camera.position.set(0, 3, 8)
 
 
 // ==========================================
@@ -39,11 +37,13 @@ renderer.setSize(
     window.innerHeight
 )
 
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+)
+
 renderer.shadowMap.enabled = true
 
-document.body.appendChild(
-    renderer.domElement
-)
+document.body.appendChild(renderer.domElement)
 
 
 // ==========================================
@@ -56,225 +56,459 @@ const controls = new OrbitControls(
 )
 
 controls.enableDamping = true
-controls.minDistance = 2
-controls.maxDistance = 10
-controls.target.set(0, 0, 0)
+controls.target.set(0, 2, 0)
 
 
 // ==========================================
-// TEXTURE
+// LIGHT
 // ==========================================
 
-const textureLoader = new THREE.TextureLoader()
-
-const floorTexture = textureLoader.load(
-    '/textures/wood.avif'
+const ambientLight = new THREE.AmbientLight(
+    0xffffff,
+    1.5
 )
 
-floorTexture.wrapS = THREE.RepeatWrapping
-floorTexture.wrapT = THREE.RepeatWrapping
+scene.add(ambientLight)
 
-floorTexture.repeat.set(4, 4)
-
-
-// ==========================================
-// FLOWER CENTER
-// ==========================================
-
-const centerGeometry = new THREE.SphereGeometry(
-    0.4,
-    32,
-    32
+const directionalLight = new THREE.DirectionalLight(
+    0xffffff,
+    3
 )
 
-const centerMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffcc00,
-    roughness: 0.5
-})
+directionalLight.position.set(4, 8, 5)
 
-const flowerCenter = new THREE.Mesh(
-    centerGeometry,
-    centerMaterial
-)
+directionalLight.castShadow = true
 
-flowerCenter.position.z = 0.15
-
-flowerCenter.castShadow = true
-
-flower.add(flowerCenter)
+scene.add(directionalLight)
 
 
 // ==========================================
-// PETALS
+// BOUQUET GROUP
+// EVERYTHING GOES INSIDE THIS GROUP
 // ==========================================
 
-const petalGeometry = new THREE.SphereGeometry(
-    0.4,
-    32,
-    32
-)
+const bouquet = new THREE.Group()
 
-const petalMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff69b4,
-    roughness: 0.4
-})
+scene.add(bouquet)
 
-const petalCount = 6
 
-for (let i = 0; i < petalCount; i++) {
+// ==========================================
+// CREATE FLOWER FUNCTION
+// ==========================================
 
-    const petal = new THREE.Mesh(
-        petalGeometry,
-        petalMaterial
-    )
+function createFlower(color = 0xff3366) {
 
-    const angle =
-        (i / petalCount) * Math.PI * 2
+    const flower = new THREE.Group()
 
-    petal.position.x =
-        Math.cos(angle) * 0.75
+    // --------------------------------------
+    // Flower center
+    // --------------------------------------
 
-    petal.position.y =
-        Math.sin(angle) * 0.75
+    const centerGeometry =
+        new THREE.SphereGeometry(0.2, 32, 32)
 
-    petal.position.z = -0.05
+    const centerMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xffcc33
+        })
 
-    petal.rotation.z =
-        angle - Math.PI / 2
+    const center =
+        new THREE.Mesh(
+            centerGeometry,
+            centerMaterial
+        )
 
-    petal.rotation.x = 0.15
+    center.castShadow = true
 
-    petal.scale.set(
-        0.65,
-        1.4,
-        0.22
-    )
+    flower.add(center)
 
-    petal.castShadow = true
 
-    flower.add(petal)
+    // --------------------------------------
+    // Petals
+    // --------------------------------------
+
+    const petalGeometry =
+        new THREE.SphereGeometry(
+            0.35,
+            32,
+            32
+        )
+
+    const petalMaterial =
+        new THREE.MeshStandardMaterial({
+            color: color,
+            roughness: 0.5
+        })
+
+
+    const petalCount = 10
+
+
+    for (
+        let i = 0;
+        i < petalCount;
+        i++
+    ) {
+
+        const petal =
+            new THREE.Mesh(
+                petalGeometry,
+                petalMaterial
+            )
+
+
+        const angle =
+            (i / petalCount)
+            * Math.PI
+            * 2
+
+
+        petal.position.x =
+            Math.cos(angle) * 0.45
+
+        petal.position.y =
+            Math.sin(angle) * 0.45
+
+
+        petal.scale.set(
+            0.65,
+            1.2,
+            0.35
+        )
+
+
+        petal.rotation.z =
+            angle - Math.PI / 2
+
+
+        petal.castShadow = true
+
+
+        flower.add(petal)
+    }
+
+
+    // --------------------------------------
+    // Second petal layer
+    // --------------------------------------
+
+    for (
+        let i = 0;
+        i < 8;
+        i++
+    ) {
+
+        const petal =
+            new THREE.Mesh(
+                petalGeometry,
+                petalMaterial
+            )
+
+
+        const angle =
+            (i / 8)
+            * Math.PI
+            * 2
+            + 0.3
+
+
+        petal.position.x =
+            Math.cos(angle) * 0.3
+
+        petal.position.y =
+            Math.sin(angle) * 0.3
+
+
+        petal.position.z = 0.12
+
+
+        petal.scale.set(
+            0.5,
+            0.9,
+            0.3
+        )
+
+
+        petal.rotation.z =
+            angle - Math.PI / 2
+
+
+        flower.add(petal)
+    }
+
+
+    return flower
 }
 
 
 // ==========================================
-// STEM
+// CREATE MANY FLOWERS
 // ==========================================
 
-const stemGeometry = new THREE.CylinderGeometry(
-    0.08,
-    0.08,
-    2.5,
-    16
-)
+const flower1 = createFlower(0xff3344)
 
-const stemMaterial = new THREE.MeshStandardMaterial({
-    color: 0x228b22,
-    roughness: 0.8
-})
-
-const stem = new THREE.Mesh(
-    stemGeometry,
-    stemMaterial
-)
-
-stem.position.y = -1.5
-
-stem.castShadow = true
-
-flower.add(stem)
-
-
-// ==========================================
-// LEAF 1
-// ==========================================
-
-const leafGeometry = new THREE.SphereGeometry(
-    0.3,
-    24,
-    24
-)
-
-const leafMaterial = new THREE.MeshStandardMaterial({
-    color: 0x2e8b57,
-    roughness: 0.8
-})
-
-const leaf = new THREE.Mesh(
-    leafGeometry,
-    leafMaterial
-)
-
-leaf.scale.set(
-    0.5,
-    1.3,
-    0.15
-)
-
-leaf.position.set(
-    0.35,
-    -1.2,
-    0
-)
-
-leaf.rotation.z = -0.8
-
-leaf.castShadow = true
-
-flower.add(leaf)
-
-
-// ==========================================
-// LEAF 2
-// ==========================================
-
-const leaf2 = leaf.clone()
-
-leaf2.position.set(
-    -0.35,
-    -1.7,
-    0
-)
-
-leaf2.rotation.z = 0.8
-
-leaf2.castShadow = true
-
-flower.add(leaf2)
-
-
-// ==========================================
-// MOVE WHOLE FLOWER
-// ==========================================
-
-flower.position.set(
+flower1.position.set(
     0,
-    0.3,
+    3.5,
     0
 )
+
+bouquet.add(flower1)
+
+
+
+const flower2 = createFlower(0xff6688)
+
+flower2.position.set(
+    -1.1,
+    3.1,
+    0.2
+)
+
+flower2.rotation.y = 0.3
+
+bouquet.add(flower2)
+
+
+
+const flower3 = createFlower(0xffaaaa)
+
+flower3.position.set(
+    1.1,
+    3.1,
+    0.1
+)
+
+flower3.rotation.y = -0.3
+
+bouquet.add(flower3)
+
+
+
+const flower4 = createFlower(0xff2244)
+
+flower4.position.set(
+    -0.65,
+    4.1,
+    -0.3
+)
+
+flower4.scale.setScalar(0.9)
+
+bouquet.add(flower4)
+
+
+
+const flower5 = createFlower(0xff7799)
+
+flower5.position.set(
+    0.7,
+    4.2,
+    -0.2
+)
+
+flower5.scale.setScalar(0.85)
+
+bouquet.add(flower5)
+
+
+
+const flower6 = createFlower(0xffdddd)
+
+flower6.position.set(
+    0,
+    2.8,
+    0.5
+)
+
+flower6.scale.setScalar(0.8)
+
+bouquet.add(flower6)
+
+
+// ==========================================
+// STEMS
+// ==========================================
+
+const stemMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x295b32
+    })
+
+
+function createStem(x, y, z, height) {
+
+    const geometry =
+        new THREE.CylinderGeometry(
+            0.04,
+            0.055,
+            height,
+            12
+        )
+
+    const stem =
+        new THREE.Mesh(
+            geometry,
+            stemMaterial
+        )
+
+
+    stem.position.set(
+        x,
+        y,
+        z
+    )
+
+
+    stem.castShadow = true
+
+
+    bouquet.add(stem)
+}
+
+
+// several stems
+
+createStem(
+    0,
+    1.7,
+    0,
+    3.4
+)
+
+createStem(
+    -0.5,
+    1.6,
+    0,
+    3
+)
+
+createStem(
+    0.5,
+    1.6,
+    0,
+    3
+)
+
+createStem(
+    -0.8,
+    1.7,
+    -0.2,
+    3.2
+)
+
+createStem(
+    0.8,
+    1.7,
+    -0.2,
+    3.2
+)
+
+
+// ==========================================
+// BOUQUET WRAPPER
+// ==========================================
+
+const wrapperGeometry =
+    new THREE.ConeGeometry(
+        1,
+        2.2,
+        32,
+        1,
+        true
+    )
+
+const wrapperMaterial =
+    new THREE.MeshStandardMaterial({
+
+        color: 0x8b1e2d,
+
+        transparent: true,
+
+        opacity: 0.7,
+
+        side: THREE.DoubleSide,
+
+        roughness: 0.6
+    })
+
+
+const wrapper =
+    new THREE.Mesh(
+        wrapperGeometry,
+        wrapperMaterial
+    )
+
+
+wrapper.position.y = 0.7
+
+bouquet.add(wrapper)
+
+
+// ==========================================
+// RIBBON
+// ==========================================
+
+const ribbonMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xffdddd,
+        roughness: 0.4
+    })
+
+
+const ribbonGeometry =
+    new THREE.TorusGeometry(
+        0.45,
+        0.05,
+        16,
+        60
+    )
+
+
+const ribbon =
+    new THREE.Mesh(
+        ribbonGeometry,
+        ribbonMaterial
+    )
+
+
+ribbon.position.y = 1.25
+
+ribbon.rotation.x =
+    Math.PI / 2
+
+bouquet.add(ribbon)
 
 
 // ==========================================
 // FLOOR
 // ==========================================
 
-const floorGeometry = new THREE.PlaneGeometry(
-    10,
-    10
-)
+const floorGeometry =
+    new THREE.PlaneGeometry(
+        30,
+        30
+    )
 
-const floorMaterial = new THREE.MeshStandardMaterial({
-    map: floorTexture,
-    roughness: 0.8,
-    metalness: 0
-})
+const floorMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x21130d,
+        roughness: 0.7
+    })
 
-const floor = new THREE.Mesh(
-    floorGeometry,
-    floorMaterial
-)
 
-floor.rotation.x = -Math.PI / 2
-floor.position.y = -2.5
+const floor =
+    new THREE.Mesh(
+        floorGeometry,
+        floorMaterial
+    )
+
+
+floor.rotation.x =
+    -Math.PI / 2
+
+floor.position.y =
+    -0.45
 
 floor.receiveShadow = true
 
@@ -282,30 +516,22 @@ scene.add(floor)
 
 
 // ==========================================
-// LIGHTS
+// IMPORTANT
+// CENTER OF ROTATION
 // ==========================================
 
-const light = new THREE.DirectionalLight(
-    0xffffff,
-    3
-)
+// Move bouquet slightly down so rotation
+// feels centered around the bouquet
 
-light.position.set(
-    -3,
-    3,
-    5
-)
+bouquet.position.y = 0
 
-light.castShadow = true
 
-scene.add(light)
+// ==========================================
+// CLOCK
+// ==========================================
 
-const ambientLight = new THREE.AmbientLight(
-    0xffffff,
-    0.5
-)
-
-scene.add(ambientLight)
+const clock =
+    new THREE.Clock()
 
 
 // ==========================================
@@ -314,9 +540,33 @@ scene.add(ambientLight)
 
 function animate() {
 
-    requestAnimationFrame(animate)
+    requestAnimationFrame(
+        animate
+    )
+
+
+    const elapsedTime =
+        clock.getElapsedTime()
+
+
+    // --------------------------------------
+    // ROTATE WHOLE BOUQUET
+    // --------------------------------------
+
+    bouquet.rotation.y =
+        elapsedTime * 0.25
+
+
+    // very small floating movement
+
+    bouquet.position.y =
+        Math.sin(
+            elapsedTime * 1.2
+        ) * 0.05
+
 
     controls.update()
+
 
     renderer.render(
         scene,
@@ -324,4 +574,37 @@ function animate() {
     )
 }
 
+
 animate()
+
+
+// ==========================================
+// RESPONSIVE
+// ==========================================
+
+window.addEventListener(
+    'resize',
+    () => {
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight
+
+
+        camera.updateProjectionMatrix()
+
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        )
+
+
+        renderer.setPixelRatio(
+            Math.min(
+                window.devicePixelRatio,
+                2
+            )
+        )
+    }
+)
