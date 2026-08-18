@@ -2,14 +2,20 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
-// Scene
+// ==========================================
+// SCENE
+// ==========================================
+
 const scene = new THREE.Scene()
 
 const flower = new THREE.Group()
 scene.add(flower)
 
 
-// Camera
+// ==========================================
+// CAMERA
+// ==========================================
+
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -17,7 +23,13 @@ const camera = new THREE.PerspectiveCamera(
     1000
 )
 
-// Renderer
+camera.position.z = 4
+
+
+// ==========================================
+// RENDERER
+// ==========================================
+
 const renderer = new THREE.WebGLRenderer({
     antialias: true
 })
@@ -27,14 +39,17 @@ renderer.setSize(
     window.innerHeight
 )
 
-// Enable shadows
 renderer.shadowMap.enabled = true
 
 document.body.appendChild(
     renderer.domElement
 )
 
-// Orbit Controls
+
+// ==========================================
+// ORBIT CONTROLS
+// ==========================================
+
 const controls = new OrbitControls(
     camera,
     renderer.domElement
@@ -43,66 +58,31 @@ const controls = new OrbitControls(
 controls.enableDamping = true
 controls.minDistance = 2
 controls.maxDistance = 10
-controls.target.set(0, 1, 0)
+controls.target.set(0, 0, 0)
 
 
 // ==========================================
 // TEXTURE
 // ==========================================
 
-// 1. Create a TextureLoader
 const textureLoader = new THREE.TextureLoader()
 
-// 2. Load our wood image
 const floorTexture = textureLoader.load(
     '/textures/wood.avif'
 )
 
-// 3. Allow the texture to repeat
 floorTexture.wrapS = THREE.RepeatWrapping
 floorTexture.wrapT = THREE.RepeatWrapping
 
-// 4. Repeat it 4 × 4 times
 floorTexture.repeat.set(4, 4)
 
 
 // ==========================================
-// TORUS KNOT
+// FLOWER CENTER
 // ==========================================
 
-// Geometry
-const geometry = new THREE.TorusKnotGeometry(
-    1,
-    0.3,
-    100,
-    16
-)
-
-// Material
-const material = new THREE.MeshStandardMaterial({
-    color: 0xff69b4,
-    roughness: 0.2,
-    metalness: 0.8
-})
-
-// Mesh
-const object = new THREE.Mesh(
-    geometry,
-    material
-)
-
-// Cast shadow
-object.castShadow = true
-
-//scene.add(object)
-
-// ==========================================
-// FLOWER
-// ==========================================
-
-// Flower center
 const centerGeometry = new THREE.SphereGeometry(
-    0.35,
+    0.4,
     32,
     32
 )
@@ -117,8 +97,17 @@ const flowerCenter = new THREE.Mesh(
     centerMaterial
 )
 
+flowerCenter.position.z = 0.15
+
+flowerCenter.castShadow = true
+
 flower.add(flowerCenter)
-// Petal geometry
+
+
+// ==========================================
+// PETALS
+// ==========================================
+
 const petalGeometry = new THREE.SphereGeometry(
     0.4,
     32,
@@ -142,21 +131,35 @@ for (let i = 0; i < petalCount; i++) {
     const angle =
         (i / petalCount) * Math.PI * 2
 
-    petal.position.x = Math.cos(angle) * 0.7
-    petal.position.y = Math.sin(angle) * 0.7
+    petal.position.x =
+        Math.cos(angle) * 0.75
 
-    petal.rotation.z = angle - Math.PI / 2
+    petal.position.y =
+        Math.sin(angle) * 0.75
+
+    petal.position.z = -0.05
+
+    petal.rotation.z =
+        angle - Math.PI / 2
+
+    petal.rotation.x = 0.15
 
     petal.scale.set(
-        0.7,
-        1.5,
-        0.3
+        0.65,
+        1.4,
+        0.22
     )
+
+    petal.castShadow = true
 
     flower.add(petal)
 }
 
-// Stem
+
+// ==========================================
+// STEM
+// ==========================================
+
 const stemGeometry = new THREE.CylinderGeometry(
     0.08,
     0.08,
@@ -176,7 +179,78 @@ const stem = new THREE.Mesh(
 
 stem.position.y = -1.5
 
+stem.castShadow = true
+
 flower.add(stem)
+
+
+// ==========================================
+// LEAF 1
+// ==========================================
+
+const leafGeometry = new THREE.SphereGeometry(
+    0.3,
+    24,
+    24
+)
+
+const leafMaterial = new THREE.MeshStandardMaterial({
+    color: 0x2e8b57,
+    roughness: 0.8
+})
+
+const leaf = new THREE.Mesh(
+    leafGeometry,
+    leafMaterial
+)
+
+leaf.scale.set(
+    0.5,
+    1.3,
+    0.15
+)
+
+leaf.position.set(
+    0.35,
+    -1.2,
+    0
+)
+
+leaf.rotation.z = -0.8
+
+leaf.castShadow = true
+
+flower.add(leaf)
+
+
+// ==========================================
+// LEAF 2
+// ==========================================
+
+const leaf2 = leaf.clone()
+
+leaf2.position.set(
+    -0.35,
+    -1.7,
+    0
+)
+
+leaf2.rotation.z = 0.8
+
+leaf2.castShadow = true
+
+flower.add(leaf2)
+
+
+// ==========================================
+// MOVE WHOLE FLOWER
+// ==========================================
+
+flower.position.set(
+    0,
+    0.3,
+    0
+)
 
 
 // ==========================================
@@ -188,7 +262,6 @@ const floorGeometry = new THREE.PlaneGeometry(
     10
 )
 
-// Use our texture here 👇
 const floorMaterial = new THREE.MeshStandardMaterial({
     map: floorTexture,
     roughness: 0.8,
@@ -201,9 +274,8 @@ const floor = new THREE.Mesh(
 )
 
 floor.rotation.x = -Math.PI / 2
-floor.position.y = -1.7
+floor.position.y = -2.5
 
-// Receive shadow
 floor.receiveShadow = true
 
 scene.add(floor)
@@ -213,7 +285,6 @@ scene.add(floor)
 // LIGHTS
 // ==========================================
 
-// Directional Light
 const light = new THREE.DirectionalLight(
     0xffffff,
     3
@@ -229,7 +300,6 @@ light.castShadow = true
 
 scene.add(light)
 
-// Ambient Light
 const ambientLight = new THREE.AmbientLight(
     0xffffff,
     0.5
@@ -239,24 +309,12 @@ scene.add(ambientLight)
 
 
 // ==========================================
-// CAMERA POSITION
-// ==========================================
-
-camera.position.z = 4
-
-
-// ==========================================
 // ANIMATION
 // ==========================================
 
 function animate() {
 
     requestAnimationFrame(animate)
-
-    object.rotation.x += 0.01
-    object.rotation.y += 0.01
-
-    //group.rotation.y += 0.01
 
     controls.update()
 
