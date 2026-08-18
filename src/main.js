@@ -134,15 +134,32 @@ function createFlower(color = 0xff3366) {
             32
         )
 
+
+    // ✨ CHANGED: MeshStandardMaterial
+    // to PointsMaterial
     const petalMaterial =
-        new THREE.MeshStandardMaterial({
+        new THREE.PointsMaterial({
             color: color,
-            roughness: 0.5
+
+            // size of each glowing particle
+            size: 0.03,
+
+            transparent: true,
+            opacity: 0.35,
+
+            // ✨ creates brighter overlapping particles
+            blending: THREE.NormalBlending,
+
+            depthWrite: false
         })
 
 
     const petalCount = 10
 
+
+    // --------------------------------------
+    // First petal layer
+    // --------------------------------------
 
     for (
         let i = 0;
@@ -150,8 +167,9 @@ function createFlower(color = 0xff3366) {
         i++
     ) {
 
+        // ✨ CHANGED: Mesh → Points
         const petal =
-            new THREE.Mesh(
+            new THREE.Points(
                 petalGeometry,
                 petalMaterial
             )
@@ -181,9 +199,6 @@ function createFlower(color = 0xff3366) {
             angle - Math.PI / 2
 
 
-        petal.castShadow = true
-
-
         flower.add(petal)
     }
 
@@ -198,8 +213,9 @@ function createFlower(color = 0xff3366) {
         i++
     ) {
 
+        // ✨ CHANGED: Mesh → Points
         const petal =
-            new THREE.Mesh(
+            new THREE.Points(
                 petalGeometry,
                 petalMaterial
             )
@@ -245,7 +261,7 @@ function createFlower(color = 0xff3366) {
 // CREATE MANY FLOWERS
 // ==========================================
 
-const flower1 = createFlower(0xff3344)
+const flower1 = createFlower(0xff1744)
 
 flower1.position.set(
     0,
@@ -257,7 +273,7 @@ bouquet.add(flower1)
 
 
 
-const flower2 = createFlower(0xff6688)
+const flower2 = createFlower(0xff4f81)
 
 flower2.position.set(
     -1.1,
@@ -271,7 +287,7 @@ bouquet.add(flower2)
 
 
 
-const flower3 = createFlower(0xffaaaa)
+const flower3 = createFlower(0xff8fa3)
 
 flower3.position.set(
     1.1,
@@ -285,7 +301,7 @@ bouquet.add(flower3)
 
 
 
-const flower4 = createFlower(0xff2244)
+const flower4 = createFlower(0xe91e63)
 
 flower4.position.set(
     -0.65,
@@ -299,7 +315,7 @@ bouquet.add(flower4)
 
 
 
-const flower5 = createFlower(0xff7799)
+const flower5 = createFlower(0xff3366)
 
 flower5.position.set(
     0.7,
@@ -313,7 +329,7 @@ bouquet.add(flower5)
 
 
 
-const flower6 = createFlower(0xffdddd)
+const flower6 = createFlower(0xff6f91)
 
 flower6.position.set(
     0,
