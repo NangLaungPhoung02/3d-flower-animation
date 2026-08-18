@@ -135,21 +135,26 @@ function createFlower(color = 0xff3366) {
         )
 
 
-    // ✨ CHANGED: MeshStandardMaterial
-    // to PointsMaterial
+    // Main particle layer
     const petalMaterial =
         new THREE.PointsMaterial({
             color: color,
-
-            // size of each glowing particle
             size: 0.03,
-
             transparent: true,
             opacity: 0.35,
-
-            // ✨ creates brighter overlapping particles
             blending: THREE.NormalBlending,
+            depthWrite: false
+        })
 
+
+    // ✨ NEW: glow layer
+    const glowMaterial =
+        new THREE.PointsMaterial({
+            color: color,
+            size: 0.06,
+            transparent: true,
+            opacity: 0.12,
+            blending: THREE.AdditiveBlending,
             depthWrite: false
         })
 
@@ -167,11 +172,18 @@ function createFlower(color = 0xff3366) {
         i++
     ) {
 
-        // ✨ CHANGED: Mesh → Points
         const petal =
             new THREE.Points(
                 petalGeometry,
                 petalMaterial
+            )
+
+
+        // ✨ NEW: glowing copy
+        const glowPetal =
+            new THREE.Points(
+                petalGeometry,
+                glowMaterial
             )
 
 
@@ -199,6 +211,24 @@ function createFlower(color = 0xff3366) {
             angle - Math.PI / 2
 
 
+        // copy shape/position to glow
+        glowPetal.position.copy(
+            petal.position
+        )
+
+        glowPetal.scale.copy(
+            petal.scale
+        )
+
+        glowPetal.rotation.copy(
+            petal.rotation
+        )
+
+
+        // glow behind
+        flower.add(glowPetal)
+
+        // main particle petal
         flower.add(petal)
     }
 
@@ -213,11 +243,18 @@ function createFlower(color = 0xff3366) {
         i++
     ) {
 
-        // ✨ CHANGED: Mesh → Points
         const petal =
             new THREE.Points(
                 petalGeometry,
                 petalMaterial
+            )
+
+
+        // ✨ NEW: glowing copy
+        const glowPetal =
+            new THREE.Points(
+                petalGeometry,
+                glowMaterial
             )
 
 
@@ -249,12 +286,28 @@ function createFlower(color = 0xff3366) {
             angle - Math.PI / 2
 
 
+        // copy shape/position to glow
+        glowPetal.position.copy(
+            petal.position
+        )
+
+        glowPetal.scale.copy(
+            petal.scale
+        )
+
+        glowPetal.rotation.copy(
+            petal.rotation
+        )
+
+
+        flower.add(glowPetal)
         flower.add(petal)
     }
 
 
     return flower
 }
+
 
 
 // ==========================================
