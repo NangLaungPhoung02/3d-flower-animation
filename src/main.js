@@ -897,7 +897,79 @@ const sparkles =
 
 bouquet.add(sparkles)
 
+// =====================================================
+// PARTICLE BOUQUET WRAP
+// =====================================================
 
+const wrapPositions = []
+
+const wrapParticleCount = 2200
+
+for (let i = 0; i < wrapParticleCount; i++) {
+
+    const y = Math.random() * 1.8 + 0.25
+
+    // wider at the top, narrow at the bottom
+    const width =
+        THREE.MathUtils.lerp(
+            0.35,
+            1.5,
+            y / 2.05
+        )
+
+    const x =
+        THREE.MathUtils.randFloatSpread(
+            width * 2
+        )
+
+    const z =
+        THREE.MathUtils.randFloatSpread(
+            width * 1.0
+        )
+
+    wrapPositions.push(
+        x,
+        y,
+        z
+    )
+}
+
+
+const wrapGeometry =
+    new THREE.BufferGeometry()
+
+
+wrapGeometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(
+        wrapPositions,
+        3
+    )
+)
+
+
+const wrapMaterial =
+    new THREE.PointsMaterial({
+        color: 0xffa8b8,
+        size: 0.025,
+        map: particleTexture,
+        transparent: true,
+        opacity: 0.35,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+    })
+
+
+const particleWrap =
+    new THREE.Points(
+        wrapGeometry,
+        wrapMaterial
+    )
+
+
+particleWrap.position.y = 0.1
+
+bouquet.add(particleWrap)
 
 
 // =====================================================
