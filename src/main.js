@@ -588,7 +588,7 @@ const rose1 =
 rose1.position.set(
     0,
     3.8,
-    0.5
+    0.7
 )
 
 rose1.scale.setScalar(1.05)
@@ -601,9 +601,9 @@ const rose2 =
     createRose(0xff668f)
 
 rose2.position.set(
-    -1.0,
-    3.5,
-    0.15
+    -0.75,
+    3.65,
+    0.35
 )
 
 rose2.rotation.z = 0.15
@@ -620,9 +620,9 @@ const rose3 =
     createRose(0xff1744)
 
 rose3.position.set(
-    1.0,
-    3.5,
-    0.1
+    0.75,
+    3.65,
+    0.35
 )
 
 rose3.rotation.z = -0.15
@@ -637,9 +637,9 @@ const rose4 =
     createRose(0xff416c)
 
 rose4.position.set(
-    -0.65,
-    4.4,
-    -0.25
+    -0.45,
+    4.25,
+    -0.1
 )
 
 rose4.scale.setScalar(0.9)
@@ -654,9 +654,9 @@ const rose5 =
     createRose(0xff819c)
 
 rose5.position.set(
-    0.65,
-    4.35,
-    -0.3
+    0.45,
+    4.25,
+    -0.1
 )
 
 rose5.scale.setScalar(0.88)
@@ -672,8 +672,8 @@ const rose6 =
 
 rose6.position.set(
     0,
-    3.05,
-    0.75
+    3.025,
+    0.9
 )
 
 rose6.scale.setScalar(0.82)
@@ -686,9 +686,9 @@ const rose7 =
     createRose(0xff8faa)
 
 rose7.position.set(
-    -1.45,
-    3.9,
-    -0.35
+    -1.05,
+    3.85,
+    -0.15
 )
 
 rose7.scale.setScalar(0.75)
@@ -703,9 +703,9 @@ const rose8 =
     createRose(0xff486b)
 
 rose8.position.set(
-    1.4,
-    3.9,
-    -0.3
+    1.05,
+    3.85,
+    -0.15
 )
 
 rose8.scale.setScalar(0.78)
@@ -736,8 +736,8 @@ function createStem(
 
     const geometry =
         new THREE.CylinderGeometry(
-            0.035,
-            0.045,
+            0.018,
+            0.025,
             height,
             10
         )
@@ -898,81 +898,6 @@ const sparkles =
 bouquet.add(sparkles)
 
 
-// =====================================================
-// WRAPPER
-// =====================================================
-
-const wrapperGeometry =
-    new THREE.ConeGeometry(
-        0.95,
-        2.1,
-        32,
-        1,
-        true
-    )
-
-
-const wrapperMaterial =
-    new THREE.MeshStandardMaterial({
-
-        color: 0x741829,
-
-        transparent: true,
-
-        opacity: 0.6,
-
-        side: THREE.DoubleSide,
-
-        roughness: 0.5
-    })
-
-
-const wrapper =
-    new THREE.Mesh(
-        wrapperGeometry,
-        wrapperMaterial
-    )
-
-
-wrapper.position.y = 0.65
-
-bouquet.add(wrapper)
-
-
-// =====================================================
-// RIBBON
-// =====================================================
-
-const ribbonGeometry =
-    new THREE.TorusGeometry(
-        0.43,
-        0.045,
-        16,
-        60
-    )
-
-
-const ribbonMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0xffd9df,
-        roughness: 0.3
-    })
-
-
-const ribbon =
-    new THREE.Mesh(
-        ribbonGeometry,
-        ribbonMaterial
-    )
-
-
-ribbon.position.y = 1.2
-
-ribbon.rotation.x =
-    Math.PI / 2
-
-
-bouquet.add(ribbon)
 
 
 // =====================================================
