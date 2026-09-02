@@ -27,6 +27,9 @@ Open:
 ```
 http://localhost:5173
 ```
+stop the server 
+Start: npm run dev
+Stop: Ctrl + C
 
 ## 🎯 Learning Goals
 
